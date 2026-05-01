@@ -177,10 +177,10 @@ function PullRequestDetailPage() {
             <span className="font-mono">
               {pr.headRefName} → {pr.baseRefName}
             </span>
-            <span className="font-mono inline-flex items-center gap-0.5 text-emerald-400">
+            <span className="font-mono inline-flex items-center gap-0.5 text-foreground">
               <PlusIcon className="size-3" /> {compactNumber(pr.additions)}
             </span>
-            <span className="font-mono inline-flex items-center gap-0.5 text-rose-400">
+            <span className="font-mono inline-flex items-center gap-0.5 text-destructive">
               <MinusIcon className="size-3" /> {compactNumber(pr.deletions)}
             </span>
             <span>{pr.changedFiles} files</span>
@@ -368,18 +368,18 @@ function PullRequestDetailPage() {
           <Sidecard label="merge">
             <p
               className={
-                pr.mergeable === 'MERGEABLE'
-                  ? 'text-emerald-400'
-                  : pr.mergeable === 'CONFLICTING'
-                    ? 'text-rose-400'
+                pr.mergeable === 'CONFLICTING'
+                  ? 'text-destructive'
+                  : pr.mergeable === 'MERGEABLE'
+                    ? 'text-foreground'
                     : 'text-muted-foreground'
               }
             >
               {pr.mergeable === 'MERGEABLE'
-                ? 'no conflicts'
+                ? '[no conflicts]'
                 : pr.mergeable === 'CONFLICTING'
-                  ? 'conflicts with base'
-                  : 'mergeability unknown'}
+                  ? '[conflicts with base]'
+                  : '[mergeability unknown]'}
             </p>
             {pr.mergedAt ? (
               <p className="text-muted-foreground">

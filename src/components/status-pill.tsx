@@ -13,7 +13,30 @@ import {
   XCircleIcon,
 } from 'lucide-react'
 import { cn } from '#/lib/utils'
-import type { GhCheckState, GhIssueState, GhPrState } from '#/lib/types'
+import type {
+  GhCheckState,
+  GhIssueState,
+  GhPrState,
+} from '#/lib/types'
+
+/**
+ * The dashboard sticks to the project's neutral palette plus `--destructive`,
+ * so every pill uses one of three tones:
+ *   - `default`    foreground / muted bg (open, merged, success)
+ *   - `muted`      muted-foreground (draft, neutral, pending)
+ *   - `bad`        destructive (closed, failure, conflicts)
+ *
+ * Bracket notation matches the original landing page aesthetic
+ * (`[overview]`, `[notifications*]`).
+ */
+
+type Tone = 'default' | 'muted' | 'bad'
+
+const TONE_CLASS: Record<Tone, string> = {
+  default: 'text-foreground',
+  muted: 'text-muted-foreground',
+  bad: 'text-destructive',
+}
 
 /* ------------------------------- PR state ------------------------------- */
 
@@ -32,30 +55,26 @@ export function PrStatePill({
 }: PrStatePillProps) {
   if (isDraft) {
     return (
-      <Pill className={cn('text-muted-foreground', className)}>
+      <Pill tone="muted" label="draft" showLabel={showLabel} className={className}>
         <GitPullRequestDraftIcon className="size-3" />
-        {showLabel ? 'draft' : null}
       </Pill>
     )
   }
   if (state === 'MERGED')
     return (
-      <Pill className={cn('text-violet-400', className)}>
+      <Pill tone="default" label="merged" showLabel={showLabel} className={className}>
         <GitMergeIcon className="size-3" />
-        {showLabel ? 'merged' : null}
       </Pill>
     )
   if (state === 'CLOSED')
     return (
-      <Pill className={cn('text-rose-400', className)}>
+      <Pill tone="bad" label="closed" showLabel={showLabel} className={className}>
         <GitPullRequestClosedIcon className="size-3" />
-        {showLabel ? 'closed' : null}
       </Pill>
     )
   return (
-    <Pill className={cn('text-emerald-400', className)}>
+    <Pill tone="default" label="open" showLabel={showLabel} className={className}>
       <GitPullRequestIcon className="size-3" />
-      {showLabel ? 'open' : null}
     </Pill>
   )
 }
@@ -75,15 +94,13 @@ export function IssueStatePill({
 }: IssueStatePillProps) {
   if (state === 'CLOSED')
     return (
-      <Pill className={cn('text-violet-400', className)}>
+      <Pill tone="muted" label="closed" showLabel={showLabel} className={className}>
         <CheckCircle2Icon className="size-3" />
-        {showLabel ? 'closed' : null}
       </Pill>
     )
   return (
-    <Pill className={cn('text-emerald-400', className)}>
+    <Pill tone="default" label="open" showLabel={showLabel} className={className}>
       <CircleDotIcon className="size-3" />
-      {showLabel ? 'open' : null}
     </Pill>
   )
 }
@@ -100,72 +117,44 @@ const CHECK_STYLES: Record<
   GhCheckState | 'NONE',
   {
     icon: React.ComponentType<{ className?: string }>
-    color: string
+    tone: Tone
     label: string
   }
 > = {
-  SUCCESS: {
-    icon: CheckCircle2Icon,
-    color: 'text-emerald-400',
-    label: 'passing',
-  },
-  FAILURE: { icon: XCircleIcon, color: 'text-rose-400', label: 'failing' },
-  ERROR: { icon: AlertCircleIcon, color: 'text-rose-400', label: 'error' },
-  PENDING: { icon: LoaderIcon, color: 'text-amber-400', label: 'pending' },
-  EXPECTED: {
-    icon: CircleDashedIcon,
-    color: 'text-muted-foreground',
-    label: 'expected',
-  },
-  NEUTRAL: {
-    icon: MinusCircleIcon,
-    color: 'text-muted-foreground',
-    label: 'neutral',
-  },
-  CANCELLED: {
-    icon: XCircleIcon,
-    color: 'text-muted-foreground',
-    label: 'cancelled',
-  },
-  SKIPPED: {
-    icon: MinusCircleIcon,
-    color: 'text-muted-foreground',
-    label: 'skipped',
-  },
-  TIMED_OUT: {
-    icon: AlertCircleIcon,
-    color: 'text-amber-400',
-    label: 'timed out',
-  },
+  SUCCESS: { icon: CheckCircle2Icon, tone: 'default', label: 'passing' },
+  FAILURE: { icon: XCircleIcon, tone: 'bad', label: 'failing' },
+  ERROR: { icon: AlertCircleIcon, tone: 'bad', label: 'error' },
+  PENDING: { icon: LoaderIcon, tone: 'muted', label: 'pending' },
+  EXPECTED: { icon: CircleDashedIcon, tone: 'muted', label: 'expected' },
+  NEUTRAL: { icon: MinusCircleIcon, tone: 'muted', label: 'neutral' },
+  CANCELLED: { icon: XCircleIcon, tone: 'muted', label: 'cancelled' },
+  SKIPPED: { icon: MinusCircleIcon, tone: 'muted', label: 'skipped' },
+  TIMED_OUT: { icon: AlertCircleIcon, tone: 'muted', label: 'timed out' },
   ACTION_REQUIRED: {
     icon: AlertCircleIcon,
-    color: 'text-amber-400',
+    tone: 'muted',
     label: 'action required',
   },
-  STARTUP_FAILURE: {
-    icon: XCircleIcon,
-    color: 'text-rose-400',
-    label: 'startup failure',
-  },
-  NONE: {
-    icon: CircleDashedIcon,
-    color: 'text-muted-foreground',
-    label: 'no checks',
-  },
+  STARTUP_FAILURE: { icon: XCircleIcon, tone: 'bad', label: 'startup failure' },
+  NONE: { icon: CircleDashedIcon, tone: 'muted', label: 'no checks' },
 }
 
 export function CheckPill({ state, className, label }: CheckPillProps) {
   const style = CHECK_STYLES[state ?? 'NONE'] ?? CHECK_STYLES.NONE
   const Icon = style.icon
   return (
-    <Pill className={cn(style.color, className)}>
+    <Pill
+      tone={style.tone}
+      label={label ?? style.label}
+      showLabel={true}
+      className={className}
+    >
       <Icon
         className={cn(
           'size-3',
           state === 'PENDING' ? 'animate-spin [animation-duration:1.6s]' : '',
         )}
       />
-      {label ?? style.label}
     </Pill>
   )
 }
@@ -175,15 +164,32 @@ export function CheckPill({ state, className, label }: CheckPillProps) {
 function Pill({
   children,
   className,
-}: React.PropsWithChildren<{ className?: string }>) {
+  tone,
+  label,
+  showLabel,
+}: {
+  children: React.ReactNode
+  className?: string
+  tone: Tone
+  label: string
+  showLabel: boolean
+}) {
   return (
     <span
       className={cn(
-        'inline-flex h-5 items-center gap-1 px-1.5 text-[10px] font-medium tracking-wide uppercase',
+        'inline-flex h-5 items-center gap-1 px-1 text-[10px] tracking-tight',
+        TONE_CLASS[tone],
         className,
       )}
     >
       {children}
+      {showLabel ? (
+        <span>
+          <span className="text-muted-foreground/70">[</span>
+          {label}
+          <span className="text-muted-foreground/70">]</span>
+        </span>
+      ) : null}
     </span>
   )
 }

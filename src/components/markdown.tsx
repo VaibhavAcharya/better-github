@@ -216,7 +216,7 @@ function renderBlock(block: Block, key: number): React.ReactNode {
                 className={cn(
                   'mt-0.5 inline-flex size-3 shrink-0 items-center justify-center border',
                   item.checked
-                    ? 'border-emerald-500/40 bg-emerald-500/20 text-emerald-300'
+                    ? 'border-foreground/50 bg-foreground/15 text-foreground'
                     : 'border-border bg-transparent',
                 )}
               >

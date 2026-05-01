@@ -62,8 +62,9 @@ function DiffFile({ hunk }: { hunk: Hunk }) {
             key={i}
             className={cn(
               'flex gap-2 px-3 whitespace-pre',
-              line.kind === 'add' && 'bg-emerald-500/10 text-emerald-300',
-              line.kind === 'remove' && 'bg-rose-500/10 text-rose-300',
+              line.kind === 'add' && 'bg-foreground/5 text-foreground',
+              line.kind === 'remove' &&
+                'bg-destructive/10 text-destructive',
               line.kind === 'meta' && 'text-muted-foreground',
             )}
           >

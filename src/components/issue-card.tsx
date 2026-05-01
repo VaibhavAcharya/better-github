@@ -33,7 +33,7 @@ export function IssueCard({
       data-selected={selected ? '' : undefined}
       className={cn(
         'group flex gap-3 border-l-2 border-transparent px-3 py-2 text-xs transition-colors hover:bg-muted/40 outline-none focus-visible:bg-muted/60',
-        selected && 'border-l-foreground bg-muted/40',
+        selected && 'border-l-foreground bg-muted/60',
         density === 'comfortable' && 'py-3',
         className,
       )}

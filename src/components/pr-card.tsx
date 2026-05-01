@@ -42,7 +42,7 @@ export function PrCard({
       data-selected={selected ? '' : undefined}
       className={cn(
         'group flex gap-3 border-l-2 border-transparent px-3 py-2 text-xs transition-colors hover:bg-muted/40 focus-visible:bg-muted/60 outline-none',
-        selected && 'border-l-foreground bg-muted/40',
+        selected && 'border-l-foreground bg-muted/60',
         density === 'comfortable' && 'py-3',
         className,
       )}
@@ -57,26 +57,26 @@ export function PrCard({
           </span>
           {pr.reviewDecision === 'APPROVED' ? (
             <span
-              className="flex shrink-0 items-center gap-0.5 text-[10px] text-emerald-400"
+              className="flex shrink-0 items-center gap-0.5 text-[10px] text-foreground"
               title="approved"
             >
-              <CheckIcon className="size-3" /> approved
+              <CheckIcon className="size-3" /> [approved]
             </span>
           ) : null}
           {pr.reviewDecision === 'CHANGES_REQUESTED' ? (
             <span
-              className="flex shrink-0 items-center gap-0.5 text-[10px] text-rose-400"
+              className="flex shrink-0 items-center gap-0.5 text-[10px] text-destructive"
               title="changes requested"
             >
-              <TriangleAlertIcon className="size-3" /> changes
+              <TriangleAlertIcon className="size-3" /> [changes]
             </span>
           ) : null}
           {pr.mergeable === 'CONFLICTING' ? (
             <span
-              className="flex shrink-0 items-center gap-0.5 text-[10px] text-amber-400"
+              className="flex shrink-0 items-center gap-0.5 text-[10px] text-destructive"
               title="merge conflicts"
             >
-              <GitMergeIcon className="size-3" /> conflict
+              <GitMergeIcon className="size-3" /> [conflict]
             </span>
           ) : null}
         </div>
@@ -104,12 +104,12 @@ export function PrCard({
               {pr.comments}
             </span>
           ) : null}
-          <span className="inline-flex items-center gap-1 font-mono">
-            <span className="inline-flex items-center text-emerald-400">
+          <span className="inline-flex items-center gap-1 font-mono text-muted-foreground">
+            <span className="inline-flex items-center">
               <PlusIcon className="size-3" />
               {compactNumber(pr.additions)}
             </span>
-            <span className="inline-flex items-center text-rose-400">
+            <span className="inline-flex items-center">
               <MinusIcon className="size-3" />
               {compactNumber(pr.deletions)}
             </span>

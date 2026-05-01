@@ -78,7 +78,7 @@ export function NotificationRow({
       className={cn(
         'group flex items-center gap-3 border-l-2 border-transparent px-3 py-2 text-xs transition-colors hover:bg-muted/40',
         n.unread && 'bg-muted/20',
-        selected && 'border-l-foreground bg-muted/40',
+        selected && 'border-l-foreground bg-muted/60',
       )}
     >
       <span

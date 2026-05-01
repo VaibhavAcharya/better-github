@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { ListChecksIcon, SearchIcon, XIcon } from 'lucide-react'
 import { PageHeader } from '#/components/layout/page-header'
 import { IssueCard } from '#/components/issue-card'
@@ -14,6 +14,7 @@ import {
   SelectValue,
 } from '#/components/ui/select'
 import { useSearchIssues } from '#/lib/queries'
+import { useListNav } from '#/lib/list-nav'
 import { useSettings } from '#/lib/settings'
 
 interface SearchParams {
@@ -70,6 +71,24 @@ function IssuesListPage() {
 
   const query = buildQuery()
   const result = useSearchIssues(query)
+  const routerNavigate = useNavigate()
+
+  const items = result.data?.results ?? []
+  const listNav = useListNav({
+    count: items.length,
+    onSelect: (idx) => {
+      const issue = items[idx]
+      if (!issue) return
+      void routerNavigate({
+        to: '/issues/$owner/$repo/$number',
+        params: {
+          owner: issue.repo.owner,
+          repo: issue.repo.name,
+          number: issue.number,
+        },
+      })
+    },
+  })
 
   return (
     <div className="flex min-h-full flex-col">
@@ -185,16 +204,25 @@ function IssuesListPage() {
             description="Adjust your filters or try a different search."
           />
         ) : (
-          <section className="border border-border bg-card">
+          <section
+            ref={(el) => {
+              listNav.containerRef.current = el
+            }}
+            className="border border-border bg-card"
+          >
             <header className="flex items-center justify-between border-b border-border px-3 py-2 text-xs">
               <span className="text-muted-foreground">
                 {result.data.results.length} of {result.data.totalCount} results
               </span>
             </header>
             <ul className="divide-y divide-border/60">
-              {result.data.results.map((issue) => (
-                <li key={issue.id}>
-                  <IssueCard issue={issue} />
+              {result.data.results.map((issue, idx) => (
+                <li
+                  key={issue.id}
+                  data-list-item={idx}
+                  onMouseEnter={() => listNav.setIndex(idx)}
+                >
+                  <IssueCard issue={issue} selected={idx === listNav.index} />
                 </li>
               ))}
             </ul>

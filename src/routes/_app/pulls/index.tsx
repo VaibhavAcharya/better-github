@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { GitPullRequestIcon, SearchIcon, XIcon } from 'lucide-react'
 import { PageHeader } from '#/components/layout/page-header'
 import { PrCard } from '#/components/pr-card'
@@ -14,6 +14,7 @@ import {
   SelectValue,
 } from '#/components/ui/select'
 import { useSearchPrs } from '#/lib/queries'
+import { useListNav } from '#/lib/list-nav'
 import { useSettings } from '#/lib/settings'
 
 interface SearchParams {
@@ -78,6 +79,24 @@ function PullsListPage() {
 
   const query = buildQuery()
   const result = useSearchPrs(query)
+  const routerNavigate = useNavigate()
+
+  const items = result.data?.results ?? []
+  const listNav = useListNav({
+    count: items.length,
+    onSelect: (idx) => {
+      const pr = items[idx]
+      if (!pr) return
+      void routerNavigate({
+        to: '/pulls/$owner/$repo/$number',
+        params: {
+          owner: pr.repo.owner,
+          repo: pr.repo.name,
+          number: pr.number,
+        },
+      })
+    },
+  })
 
   return (
     <div className="flex min-h-full flex-col">
@@ -196,16 +215,25 @@ function PullsListPage() {
             description="Adjust your filters or try a different search."
           />
         ) : (
-          <section className="border border-border bg-card">
+          <section
+            ref={(el) => {
+              listNav.containerRef.current = el
+            }}
+            className="border border-border bg-card"
+          >
             <header className="flex items-center justify-between border-b border-border px-3 py-2 text-xs">
               <span className="text-muted-foreground">
                 {result.data.results.length} of {result.data.totalCount} results
               </span>
             </header>
             <ul className="divide-y divide-border/60">
-              {result.data.results.map((pr) => (
-                <li key={pr.id}>
-                  <PrCard pr={pr} />
+              {result.data.results.map((pr, idx) => (
+                <li
+                  key={pr.id}
+                  data-list-item={idx}
+                  onMouseEnter={() => listNav.setIndex(idx)}
+                >
+                  <PrCard pr={pr} selected={idx === listNav.index} />
                 </li>
               ))}
             </ul>

@@ -60,15 +60,13 @@ export function Sidebar() {
   const pathname = router.location.pathname
 
   return (
-    <aside className="hidden h-svh w-56 shrink-0 flex-col border-r border-border bg-sidebar text-sidebar-foreground md:flex">
-      <div className="flex h-12 items-center gap-2 border-b border-border px-3">
-        <span className="size-2 rounded-sm bg-foreground" aria-hidden />
-        <span className="text-xs font-medium tracking-tight">
-          better-github
-        </span>
+    <aside className="hidden h-svh w-52 shrink-0 flex-col border-r border-border bg-sidebar text-sidebar-foreground md:flex">
+      <div className="flex h-11 items-center gap-2 px-3 text-xs font-medium tracking-tight">
+        <span aria-hidden>{'>'}</span>
+        <span>better-github</span>
       </div>
 
-      <nav className="flex flex-1 flex-col gap-0.5 p-2">
+      <nav className="flex flex-1 flex-col px-1 py-1">
         {NAV.map((item) => {
           const active =
             pathname === item.to ||
@@ -82,19 +80,28 @@ export function Sidebar() {
               className={cn(
                 'group flex items-center gap-2 px-2 py-1.5 text-xs transition-colors',
                 active
-                  ? 'bg-sidebar-accent text-sidebar-accent-foreground'
-                  : 'text-muted-foreground hover:bg-sidebar-accent/60 hover:text-sidebar-accent-foreground',
+                  ? 'text-foreground'
+                  : 'text-muted-foreground hover:text-foreground',
               )}
             >
+              <span
+                aria-hidden
+                className={cn(
+                  'w-3 shrink-0 text-center text-muted-foreground/60',
+                  active && 'text-foreground',
+                )}
+              >
+                {active ? '·' : ' '}
+              </span>
               <Icon className="size-3.5 shrink-0" />
               <span className="flex-1 truncate">{item.label}</span>
               {badge && badge > 0 ? (
-                <span className="rounded-sm bg-foreground px-1 text-[10px] font-medium text-background tabular-nums">
+                <span className="font-mono text-[10px] text-foreground tabular-nums">
                   {badge > 99 ? '99+' : badge}
                 </span>
               ) : null}
               {item.shortcut ? (
-                <span className="hidden gap-0.5 text-[10px] tracking-tight text-muted-foreground/70 group-hover:flex">
+                <span className="hidden gap-0.5 text-[10px] tracking-tight text-muted-foreground/60 group-hover:flex">
                   {item.shortcut.split(' ').map((k) => (
                     <Kbd
                       key={k}
@@ -110,16 +117,25 @@ export function Sidebar() {
         })}
       </nav>
 
-      <div className="border-t border-border p-2">
+      <div className="px-1 py-1">
         <Link
           to="/settings"
           className={cn(
             'group flex items-center gap-2 px-2 py-1.5 text-xs transition-colors',
             pathname.startsWith('/settings')
-              ? 'bg-sidebar-accent text-sidebar-accent-foreground'
-              : 'text-muted-foreground hover:bg-sidebar-accent/60 hover:text-sidebar-accent-foreground',
+              ? 'text-foreground'
+              : 'text-muted-foreground hover:text-foreground',
           )}
         >
+          <span
+            aria-hidden
+            className={cn(
+              'w-3 shrink-0 text-center text-muted-foreground/60',
+              pathname.startsWith('/settings') && 'text-foreground',
+            )}
+          >
+            {pathname.startsWith('/settings') ? '·' : ' '}
+          </span>
           <SettingsIcon className="size-3.5" />
           <span className="flex-1">settings</span>
         </Link>

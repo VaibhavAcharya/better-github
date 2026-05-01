@@ -24,8 +24,8 @@ export function FilesPanel({ files }: FilesPanelProps) {
         <span>
           <span className="text-foreground">{files.length}</span> files
         </span>
-        <span className="text-emerald-400">+{totalAdds}</span>
-        <span className="text-rose-400">-{totalDels}</span>
+        <span className="text-foreground">+{totalAdds}</span>
+        <span className="text-destructive">-{totalDels}</span>
       </div>
       <ul className="divide-y divide-border/60">
         {files.map((f) => (
@@ -35,8 +35,8 @@ export function FilesPanel({ files }: FilesPanelProps) {
           >
             <ChangeTypeIcon type={f.changeType} />
             <span className="flex-1 truncate font-mono">{f.path}</span>
-            <span className="font-mono text-emerald-400">+{f.additions}</span>
-            <span className="font-mono text-rose-400">-{f.deletions}</span>
+            <span className="font-mono text-foreground">+{f.additions}</span>
+            <span className="font-mono text-destructive">-{f.deletions}</span>
             <BarStat additions={f.additions} deletions={f.deletions} />
           </li>
         ))}
@@ -48,14 +48,16 @@ export function FilesPanel({ files }: FilesPanelProps) {
 function ChangeTypeIcon({ type }: { type: GhFileChange['changeType'] }) {
   if (type === 'ADDED')
     return (
-      <FilePlusIcon className="size-3 text-emerald-400" aria-label="added" />
+      <FilePlusIcon className="size-3 text-foreground" aria-label="added" />
     )
   if (type === 'DELETED')
-    return <FileXIcon className="size-3 text-rose-400" aria-label="deleted" />
+    return (
+      <FileXIcon className="size-3 text-destructive" aria-label="deleted" />
+    )
   if (type === 'RENAMED' || type === 'COPIED')
     return (
       <RouteIcon
-        className="size-3 text-amber-400"
+        className="size-3 text-muted-foreground"
         aria-label={type.toLowerCase()}
       />
     )
@@ -83,7 +85,7 @@ function BarStat({
           key={i}
           className={cn(
             'h-2 w-1.5',
-            i < adds ? 'bg-emerald-500/60' : 'bg-rose-500/60',
+            i < adds ? 'bg-foreground/70' : 'bg-destructive/60',
             additions === 0 && deletions === 0 && 'bg-muted',
           )}
           aria-hidden

@@ -86,12 +86,7 @@ function mapExecError(err: unknown, args: ReadonlyArray<string>): GhError {
   const stderr = (
     typeof e.stderr === 'string' ? e.stderr : e.stderr?.toString() || ''
   ).trim()
-  const exitCode =
-    typeof e.code === 'number'
-      ? e.code
-      : e.code === 'ETIMEDOUT' || e.killed
-        ? null
-        : null
+  const exitCode = typeof e.code === 'number' ? e.code : null
 
   if (e.code === 'ENOENT') {
     return new GhError({

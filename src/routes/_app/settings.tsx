@@ -65,8 +65,8 @@ function SettingsPage() {
           ) : (
             <div className="space-y-2 text-xs">
               <div className="flex items-center gap-2">
-                <TerminalIcon className="size-3.5 text-amber-400" />
-                <p className="text-amber-400">not signed in</p>
+                <TerminalIcon className="size-3.5 text-destructive" />
+                <p className="text-destructive">not signed in</p>
               </div>
               <p className="text-muted-foreground">
                 {auth.data?.errorMessage ?? 'gh CLI is not authenticated.'}

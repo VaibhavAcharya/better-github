@@ -124,14 +124,14 @@ const REVIEW_STATES: Record<
   APPROVED: {
     label: 'approved',
     icon: CheckCircle2Icon,
-    textClass: 'text-emerald-400',
-    borderClass: 'border-emerald-500/40',
+    textClass: 'text-foreground',
+    borderClass: 'border-foreground/30',
   },
   CHANGES_REQUESTED: {
     label: 'requested changes',
     icon: TriangleAlertIcon,
-    textClass: 'text-rose-400',
-    borderClass: 'border-rose-500/40',
+    textClass: 'text-destructive',
+    borderClass: 'border-destructive/40',
   },
   COMMENTED: {
     label: 'reviewed',
@@ -164,14 +164,14 @@ const EVENT_META: Record<
   closed: {
     label: 'closed this',
     icon: GitPullRequestClosedIcon,
-    color: 'text-rose-400',
+    color: 'text-destructive',
   },
   reopened: {
     label: 'reopened this',
     icon: CircleDotIcon,
-    color: 'text-emerald-400',
+    color: 'text-foreground',
   },
-  merged: { label: 'merged at', icon: GitMergeIcon, color: 'text-violet-400' },
+  merged: { label: 'merged at', icon: GitMergeIcon, color: 'text-foreground' },
   'review-requested': {
     label: 'requested review',
     icon: UserPlusIcon,
@@ -191,7 +191,7 @@ const EVENT_META: Record<
   'force-pushed': {
     label: 'force-pushed',
     icon: ZapIcon,
-    color: 'text-amber-400',
+    color: 'text-foreground',
   },
   renamed: {
     label: 'renamed',

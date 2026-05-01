@@ -39,13 +39,13 @@ export function Header({ onOpenCommandPalette }: HeaderProps) {
   const user = auth.data?.user
 
   return (
-    <header className="flex h-12 shrink-0 items-center gap-2 border-b border-border bg-background px-3">
+    <header className="flex h-11 shrink-0 items-center gap-2 border-b border-border bg-background px-3">
       <button
         type="button"
         onClick={onOpenCommandPalette}
-        className="group flex h-8 flex-1 items-center gap-2 border border-border bg-input/30 px-2.5 text-xs text-muted-foreground transition-colors hover:bg-input/50 hover:text-foreground focus-visible:border-ring focus-visible:ring-1 focus-visible:ring-ring/50 outline-none"
+        className="group flex h-7 flex-1 items-center gap-2 border border-border bg-transparent px-2 text-xs text-muted-foreground transition-colors hover:border-foreground/30 hover:text-foreground focus-visible:border-ring focus-visible:ring-1 focus-visible:ring-ring/50 outline-none"
       >
-        <SearchIcon className="size-3.5" />
+        <SearchIcon className="size-3" />
         <span className="flex-1 text-left">
           jump to PR, issue, repo… or run a command
         </span>
@@ -89,7 +89,7 @@ export function Header({ onOpenCommandPalette }: HeaderProps) {
         ) : auth.data?.errorCode === 'not-authed' ? (
           <Link
             to="/settings"
-            className="flex h-7 items-center gap-1 px-2 text-xs text-amber-400 hover:bg-muted"
+            className="flex h-7 items-center gap-1 px-2 text-xs text-destructive hover:bg-muted"
           >
             <TerminalIcon className="size-3" />
             sign in

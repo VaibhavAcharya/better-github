@@ -1,21 +1,13 @@
 import * as React from 'react'
+import { useHotkey } from '#/lib/hotkeys'
 
 /**
  * Tracks a focused index across an arbitrary list of items, with keyboard
  * navigation via j/k (and arrow keys). Designed to be glued onto any
  * scrollable list — the consumer renders the visual selection state via
- * `data-selected` or class toggles.
- *
- * Returns:
- *   - `index`         — currently selected index (-1 when empty)
- *   - `setIndex`      — programmatic setter, useful after data changes
- *   - `containerRef`  — attach to the scroll container; we use it to scroll
- *                       the focused row into view when the index moves
- *
- * Hotkeys are registered globally via the project's `useHotkey` so they don't
- * interfere with form inputs.
+ * `data-selected` or class toggles. Hotkeys go through the global
+ * `useHotkey` registry so form inputs remain untouched.
  */
-import { useHotkey } from '#/lib/hotkeys'
 
 interface UseListNavOptions {
   count: number
