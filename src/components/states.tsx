@@ -4,8 +4,8 @@ import type { LucideIcon } from 'lucide-react'
 import { Button } from '#/components/ui/button'
 import { Skeleton } from '#/components/ui/skeleton'
 import { cn } from '#/lib/utils'
-import { GhError } from '#/server/gh'
-import type { GhErrorCode } from '#/server/gh'
+import { isGhErrorShape } from '#/lib/gh-error'
+import type { GhErrorCode } from '#/lib/gh-error'
 
 interface EmptyStateProps {
   icon?: LucideIcon
@@ -88,7 +88,7 @@ function describeError(err: unknown): {
   message: string
   hint: string | null
 } {
-  if (err instanceof GhError) {
+  if (isGhErrorShape(err)) {
     return { code: err.code, message: err.message, hint: err.hint }
   }
   if (err instanceof Error) {

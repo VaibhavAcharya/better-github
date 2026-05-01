@@ -3,6 +3,10 @@
  * we only model fields we actually render, so the GraphQL queries stay small.
  */
 
+import type { GhErrorCode } from './gh-error'
+
+export type { GhErrorCode } from './gh-error'
+
 export interface GhUser {
   login: string
   name: string | null
@@ -180,7 +184,7 @@ export interface GhAuthStatus {
   user: GhUser | null
   hostname: string
   ghVersion: string | null
-  errorCode: import('#/server/gh').GhErrorCode | null
+  errorCode: GhErrorCode | null
   errorMessage: string | null
   errorHint: string | null
 }

@@ -1,21 +1,15 @@
 import { execFile } from 'node:child_process'
 import { promisify } from 'node:util'
+import type { GhErrorCode } from '#/lib/gh-error'
 
 const execFileAsync = promisify(execFile)
 
 /**
- * Stable error code surface for everything that can go wrong shelling out to `gh`.
+ * Stable error code surface for everything that can go wrong shelling out
+ * to `gh`. The codes themselves live in `lib/gh-error.ts` so they're safe to
+ * import from the client side without dragging this Node-only module along.
  */
-export type GhErrorCode =
-  | 'not-installed'
-  | 'not-authed'
-  | 'rate-limited'
-  | 'network'
-  | 'not-found'
-  | 'forbidden'
-  | 'timed-out'
-  | 'parse'
-  | 'unknown'
+export type { GhErrorCode } from '#/lib/gh-error'
 
 export class GhError extends Error {
   code: GhErrorCode
