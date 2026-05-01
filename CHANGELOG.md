@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.0.2](https://github.com/VaibhavAcharya/better-github/compare/v0.0.1...v0.0.2) (2026-05-01)
+
+
+### Bug Fixes
+
+* **ci:** exclude release-please's CHANGELOG.md from prettier check ([4cec05b](https://github.com/VaibhavAcharya/better-github/commit/4cec05b1108f73707eeac35b654a3e09d0aed70f))
+
 ## 0.0.1 (2026-05-01)
 
 
