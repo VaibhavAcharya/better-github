@@ -57,7 +57,7 @@ export function PrCard({
           </span>
           {pr.reviewDecision === 'APPROVED' ? (
             <span
-              className="flex shrink-0 items-center gap-0.5 text-[10px] text-foreground"
+              className="flex shrink-0 items-center gap-0.5 text-[10px] text-emerald-500"
               title="approved"
             >
               <CheckIcon className="size-3" /> [approved]
@@ -65,7 +65,7 @@ export function PrCard({
           ) : null}
           {pr.reviewDecision === 'CHANGES_REQUESTED' ? (
             <span
-              className="flex shrink-0 items-center gap-0.5 text-[10px] text-destructive"
+              className="flex shrink-0 items-center gap-0.5 text-[10px] text-rose-500"
               title="changes requested"
             >
               <TriangleAlertIcon className="size-3" /> [changes]
@@ -73,7 +73,7 @@ export function PrCard({
           ) : null}
           {pr.mergeable === 'CONFLICTING' ? (
             <span
-              className="flex shrink-0 items-center gap-0.5 text-[10px] text-destructive"
+              className="flex shrink-0 items-center gap-0.5 text-[10px] text-amber-500"
               title="merge conflicts"
             >
               <GitMergeIcon className="size-3" /> [conflict]
@@ -104,12 +104,12 @@ export function PrCard({
               {pr.comments}
             </span>
           ) : null}
-          <span className="inline-flex items-center gap-1 font-mono text-muted-foreground">
-            <span className="inline-flex items-center">
+          <span className="inline-flex items-center gap-1 font-mono">
+            <span className="inline-flex items-center text-emerald-500">
               <PlusIcon className="size-3" />
               {compactNumber(pr.additions)}
             </span>
-            <span className="inline-flex items-center">
+            <span className="inline-flex items-center text-rose-500">
               <MinusIcon className="size-3" />
               {compactNumber(pr.deletions)}
             </span>

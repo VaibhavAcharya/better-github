@@ -48,6 +48,8 @@
   "dependencies": {
     "@faker-js/faker": "^10.3.0",
     "@fontsource-variable/jetbrains-mono": "^5.2.8",
+    "@pierre/diffs": "^1.1.20",
+    "@pierre/trees": "^1.0.0-beta.3",
     "@tailwindcss/vite": "^4.1.18",
     "@tanstack/match-sorter-utils": "latest",
     "@tanstack/react-devtools": "latest",

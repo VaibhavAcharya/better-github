@@ -1,4 +1,3 @@
-import * as React from 'react'
 import { createFileRoute } from '@tanstack/react-router'
 import {
   ArchiveIcon,
@@ -20,8 +19,15 @@ import { PrCard } from '#/components/pr-card'
 import { IssueCard } from '#/components/issue-card'
 import { TimeAgo } from '#/components/time-ago'
 import { UserAvatar } from '#/components/user-avatar'
+import { Sidecard, SidecardStat } from '#/components/sidecard'
+import { LanguageBar } from '#/components/language-bar'
 import { useRepoDetail } from '#/lib/queries'
 import { compactNumber } from '#/lib/format'
+
+function firstLine(s: string): string {
+  const idx = s.indexOf('\n')
+  return idx === -1 ? s : s.slice(0, idx)
+}
 
 const ParamsSchema = z.object({
   owner: z.string(),
@@ -187,17 +193,17 @@ function RepoDetailPage() {
         <aside className="space-y-3 text-xs">
           <Sidecard label="stats">
             <ul className="space-y-1.5">
-              <Stat
+              <SidecardStat
                 icon={<StarIcon className="size-3" />}
                 label="stars"
                 value={compactNumber(r.stargazerCount)}
               />
-              <Stat
+              <SidecardStat
                 icon={<GitForkIcon className="size-3" />}
                 label="forks"
                 value={compactNumber(r.forkCount)}
               />
-              <Stat
+              <SidecardStat
                 icon={<EyeIcon className="size-3" />}
                 label="watchers"
                 value={compactNumber(r.watchersCount)}
@@ -228,87 +234,4 @@ function RepoDetailPage() {
       </div>
     </div>
   )
-}
-
-function Sidecard({
-  label,
-  children,
-}: {
-  label: string
-  children: React.ReactNode
-}) {
-  return (
-    <section className="border border-border bg-card p-3">
-      <p className="mb-2 text-[10px] tracking-wider uppercase text-muted-foreground">
-        {label}
-      </p>
-      {children}
-    </section>
-  )
-}
-
-function Stat({
-  icon,
-  label,
-  value,
-}: {
-  icon: React.ReactNode
-  label: string
-  value: string
-}) {
-  return (
-    <li className="flex items-center justify-between gap-2">
-      <span className="inline-flex items-center gap-2 text-muted-foreground">
-        {icon} {label}
-      </span>
-      <span className="font-mono">{value}</span>
-    </li>
-  )
-}
-
-function LanguageBar({
-  languages,
-}: {
-  languages: ReadonlyArray<{ name: string; color: string | null; size: number }>
-}) {
-  const total = languages.reduce((s, l) => s + l.size, 0) || 1
-  return (
-    <div className="space-y-2">
-      <div className="flex h-2 w-full overflow-hidden rounded-sm bg-muted">
-        {languages.map((l) => (
-          <span
-            key={l.name}
-            style={{
-              width: `${(l.size / total) * 100}%`,
-              backgroundColor: l.color ?? 'var(--muted-foreground)',
-            }}
-            title={`${l.name} ${((l.size / total) * 100).toFixed(1)}%`}
-          />
-        ))}
-      </div>
-      <ul className="space-y-0.5">
-        {languages.slice(0, 6).map((l) => (
-          <li key={l.name} className="flex items-center justify-between gap-2">
-            <span className="inline-flex items-center gap-2">
-              <span
-                className="size-2 rounded-sm"
-                style={{
-                  backgroundColor: l.color ?? 'var(--muted-foreground)',
-                }}
-              />
-              {l.name}
-            </span>
-            <span className="font-mono text-muted-foreground">
-              {((l.size / total) * 100).toFixed(1)}%
-            </span>
-          </li>
-        ))}
-      </ul>
-    </div>
-  )
-}
-
-function firstLine(s: string): string {
-  const idx = s.indexOf('\n')
-  return idx === -1 ? s : s.slice(0, idx)
 }

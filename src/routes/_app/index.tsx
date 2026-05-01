@@ -88,10 +88,7 @@ function InboxPage() {
     : []
 
   // Flat list across all sections so j/k can move through what's on screen.
-  const flat = React.useMemo(
-    () => sections.flatMap((s) => s.items),
-    [sections],
-  )
+  const flat = React.useMemo(() => sections.flatMap((s) => s.items), [sections])
 
   const listNav = useListNav({
     count: flat.length,
@@ -163,10 +160,7 @@ function InboxPage() {
                   defaultOpen={s.defaultOpen}
                 >
                   {s.items.length === 0 ? (
-                    <EmptyState
-                      title={s.empty}
-                      className="border-0 py-6"
-                    />
+                    <EmptyState title={s.empty} className="border-0 py-6" />
                   ) : (
                     <ul className="divide-y divide-border/60">
                       {s.items.map((item, i) => {

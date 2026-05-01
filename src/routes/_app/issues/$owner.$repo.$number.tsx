@@ -16,6 +16,7 @@ import { TimeAgo } from '#/components/time-ago'
 import { UserAvatar } from '#/components/user-avatar'
 import { Timeline } from '#/components/pr-detail/timeline'
 import { CommentForm } from '#/components/pr-detail/comment-form'
+import { Sidecard } from '#/components/sidecard'
 import { ErrorState, ListSkeleton } from '#/components/states'
 import { PageHeader } from '#/components/layout/page-header'
 import {
@@ -249,22 +250,5 @@ function IssueDetailPage() {
         </aside>
       </div>
     </div>
-  )
-}
-
-function Sidecard({
-  label,
-  children,
-}: {
-  label: string
-  children: React.ReactNode
-}) {
-  return (
-    <section className="border border-border bg-card p-3">
-      <p className="mb-2 text-[10px] tracking-wider uppercase text-muted-foreground">
-        {label}
-      </p>
-      {children}
-    </section>
   )
 }

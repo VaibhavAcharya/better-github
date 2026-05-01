@@ -34,13 +34,13 @@ export function ChecksPanel({ checks }: ChecksPanelProps) {
     <div>
       <div className="flex items-center gap-3 border-b border-border bg-muted/30 px-3 py-2 text-[11px] text-muted-foreground">
         <span>
-          <span className="text-foreground">{summary.passing}</span> passing
+          <span className="text-emerald-500">{summary.passing}</span> passing
         </span>
         <span>
-          <span className="text-destructive">{summary.failing}</span> failing
+          <span className="text-rose-500">{summary.failing}</span> failing
         </span>
         <span>
-          <span className="text-foreground">{summary.pending}</span> running
+          <span className="text-amber-500">{summary.pending}</span> running
         </span>
         {summary.neutral ? (
           <span>

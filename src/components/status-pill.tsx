@@ -13,29 +13,30 @@ import {
   XCircleIcon,
 } from 'lucide-react'
 import { cn } from '#/lib/utils'
-import type {
-  GhCheckState,
-  GhIssueState,
-  GhPrState,
-} from '#/lib/types'
+import type { GhCheckState, GhIssueState, GhPrState } from '#/lib/types'
 
 /**
- * The dashboard sticks to the project's neutral palette plus `--destructive`,
- * so every pill uses one of three tones:
- *   - `default`    foreground / muted bg (open, merged, success)
- *   - `muted`      muted-foreground (draft, neutral, pending)
- *   - `bad`        destructive (closed, failure, conflicts)
+ * Status pills are one of the only spots where we let color sneak in — and
+ * we still keep it muted (500-shade, not 400). Everything outside this file
+ * stays inside the project's `--foreground` / `--muted-foreground` /
+ * `--destructive` palette so the chrome doesn't look like a christmas tree.
  *
- * Bracket notation matches the original landing page aesthetic
- * (`[overview]`, `[notifications*]`).
+ * Tones:
+ *   - `ok`     subtle green (success, open, merged)
+ *   - `bad`    subtle red (closed, failure, conflict)
+ *   - `pending` subtle amber (in-progress checks)
+ *   - `muted`  no color (drafts, neutral, expected)
+ *
+ * Bracket notation (`[open]`, `[passing]`) matches the original landing page.
  */
 
-type Tone = 'default' | 'muted' | 'bad'
+type Tone = 'ok' | 'bad' | 'pending' | 'muted'
 
 const TONE_CLASS: Record<Tone, string> = {
-  default: 'text-foreground',
+  ok: 'text-emerald-500',
+  bad: 'text-rose-500',
+  pending: 'text-amber-500',
   muted: 'text-muted-foreground',
-  bad: 'text-destructive',
 }
 
 /* ------------------------------- PR state ------------------------------- */
@@ -55,25 +56,40 @@ export function PrStatePill({
 }: PrStatePillProps) {
   if (isDraft) {
     return (
-      <Pill tone="muted" label="draft" showLabel={showLabel} className={className}>
+      <Pill
+        tone="muted"
+        label="draft"
+        showLabel={showLabel}
+        className={className}
+      >
         <GitPullRequestDraftIcon className="size-3" />
       </Pill>
     )
   }
   if (state === 'MERGED')
     return (
-      <Pill tone="default" label="merged" showLabel={showLabel} className={className}>
+      <Pill
+        tone="ok"
+        label="merged"
+        showLabel={showLabel}
+        className={className}
+      >
         <GitMergeIcon className="size-3" />
       </Pill>
     )
   if (state === 'CLOSED')
     return (
-      <Pill tone="bad" label="closed" showLabel={showLabel} className={className}>
+      <Pill
+        tone="bad"
+        label="closed"
+        showLabel={showLabel}
+        className={className}
+      >
         <GitPullRequestClosedIcon className="size-3" />
       </Pill>
     )
   return (
-    <Pill tone="default" label="open" showLabel={showLabel} className={className}>
+    <Pill tone="ok" label="open" showLabel={showLabel} className={className}>
       <GitPullRequestIcon className="size-3" />
     </Pill>
   )
@@ -94,12 +110,17 @@ export function IssueStatePill({
 }: IssueStatePillProps) {
   if (state === 'CLOSED')
     return (
-      <Pill tone="muted" label="closed" showLabel={showLabel} className={className}>
+      <Pill
+        tone="ok"
+        label="closed"
+        showLabel={showLabel}
+        className={className}
+      >
         <CheckCircle2Icon className="size-3" />
       </Pill>
     )
   return (
-    <Pill tone="default" label="open" showLabel={showLabel} className={className}>
+    <Pill tone="ok" label="open" showLabel={showLabel} className={className}>
       <CircleDotIcon className="size-3" />
     </Pill>
   )
@@ -121,18 +142,18 @@ const CHECK_STYLES: Record<
     label: string
   }
 > = {
-  SUCCESS: { icon: CheckCircle2Icon, tone: 'default', label: 'passing' },
+  SUCCESS: { icon: CheckCircle2Icon, tone: 'ok', label: 'passing' },
   FAILURE: { icon: XCircleIcon, tone: 'bad', label: 'failing' },
   ERROR: { icon: AlertCircleIcon, tone: 'bad', label: 'error' },
-  PENDING: { icon: LoaderIcon, tone: 'muted', label: 'pending' },
+  PENDING: { icon: LoaderIcon, tone: 'pending', label: 'pending' },
   EXPECTED: { icon: CircleDashedIcon, tone: 'muted', label: 'expected' },
   NEUTRAL: { icon: MinusCircleIcon, tone: 'muted', label: 'neutral' },
   CANCELLED: { icon: XCircleIcon, tone: 'muted', label: 'cancelled' },
   SKIPPED: { icon: MinusCircleIcon, tone: 'muted', label: 'skipped' },
-  TIMED_OUT: { icon: AlertCircleIcon, tone: 'muted', label: 'timed out' },
+  TIMED_OUT: { icon: AlertCircleIcon, tone: 'pending', label: 'timed out' },
   ACTION_REQUIRED: {
     icon: AlertCircleIcon,
-    tone: 'muted',
+    tone: 'pending',
     label: 'action required',
   },
   STARTUP_FAILURE: { icon: XCircleIcon, tone: 'bad', label: 'startup failure' },

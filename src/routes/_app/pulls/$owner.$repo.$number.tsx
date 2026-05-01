@@ -1,37 +1,18 @@
 import * as React from 'react'
 import { createFileRoute } from '@tanstack/react-router'
 import {
-  CheckIcon,
   ExternalLinkIcon,
   FileDiffIcon,
   FilesIcon,
   GitMergeIcon,
   MessageSquareIcon,
-  PlusIcon,
   MinusIcon,
-  ScrollIcon,
+  PlusIcon,
   ShieldIcon,
-  TriangleAlertIcon,
-  XIcon,
 } from 'lucide-react'
 import { z } from 'zod'
 import { toast } from 'sonner'
 import { Button } from '#/components/ui/button'
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from '#/components/ui/dialog'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '#/components/ui/select'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '#/components/ui/tabs'
 import {
   Tooltip,
@@ -43,11 +24,22 @@ import { LabelList } from '#/components/label-tag'
 import { PrStatePill } from '#/components/status-pill'
 import { TimeAgo } from '#/components/time-ago'
 import { UserAvatar } from '#/components/user-avatar'
+import { Sidecard } from '#/components/sidecard'
 import { ChecksPanel } from '#/components/pr-detail/checks-panel'
 import { Timeline } from '#/components/pr-detail/timeline'
 import { FilesPanel } from '#/components/pr-detail/files-panel'
 import { DiffView } from '#/components/pr-detail/diff-view'
 import { CommentForm } from '#/components/pr-detail/comment-form'
+import {
+  MergeDialog
+  
+} from '#/components/pr-detail/merge-dialog'
+import type {MergeMethod} from '#/components/pr-detail/merge-dialog';
+import {
+  ReviewActions
+  
+} from '#/components/pr-detail/review-actions'
+import type {ReviewEvent} from '#/components/pr-detail/review-actions';
 import { ErrorState, ListSkeleton } from '#/components/states'
 import { PageHeader } from '#/components/layout/page-header'
 import {
@@ -68,6 +60,8 @@ const ParamsSchema = z.object({
   number: z.coerce.number().int().positive(),
 })
 
+type Tab = 'conversation' | 'files' | 'diff' | 'checks'
+
 export const Route = createFileRoute('/_app/pulls/$owner/$repo/$number')({
   parseParams: (params) => ParamsSchema.parse(params),
   component: PullRequestDetailPage,
@@ -76,14 +70,13 @@ export const Route = createFileRoute('/_app/pulls/$owner/$repo/$number')({
 function PullRequestDetailPage() {
   const { owner, repo, number } = Route.useParams()
   const query = usePullRequest(owner, repo, number)
-  const [tab, setTab] = React.useState<
-    'conversation' | 'files' | 'diff' | 'checks'
-  >('conversation')
+  const [tab, setTab] = React.useState<Tab>('conversation')
   const [resetSignal, setResetSignal] = React.useState(0)
   const [reviewBody, setReviewBody] = React.useState('')
   const [mergeOpen, setMergeOpen] = React.useState(false)
   const { settings } = useSettings()
 
+  // Only fetch the (potentially big) raw diff when the user opens the tab.
   const diff = usePullRequestDiff(owner, repo, number, tab === 'diff')
 
   const addComment = useAddPrComment(owner, repo, number)
@@ -117,27 +110,33 @@ function PullRequestDetailPage() {
         toast.success('comment posted')
       },
       onError: (e) =>
-        toast.error(`failed to comment: ${e.message ?? 'unknown'}`),
+        toast.error(`failed to comment: ${(e).message ?? 'unknown'}`),
     })
   }
 
-  const onReview = (event: 'APPROVE' | 'REQUEST_CHANGES' | 'COMMENT') => {
+  const onReview = (event: ReviewEvent) => {
     submitReview.mutate(
       { event, body: reviewBody.trim() || undefined },
       {
         onSuccess: () => {
           setReviewBody('')
-          toast.success(
-            event === 'APPROVE'
-              ? 'PR approved'
-              : event === 'REQUEST_CHANGES'
-                ? 'changes requested'
-                : 'review submitted',
-          )
+          toast.success(toastForReview(event))
         },
-        onError: (e) => toast.error(`review failed: ${e.message ?? 'unknown'}`),
+        onError: (e) =>
+          toast.error(`review failed: ${(e).message ?? 'unknown'}`),
       },
     )
+  }
+
+  const onMerge = (method: MergeMethod) => {
+    merge.mutate(method, {
+      onSuccess: () => {
+        setMergeOpen(false)
+        toast.success(`PR merged with ${method}`)
+      },
+      onError: (e) =>
+        toast.error(`merge failed: ${(e).message ?? 'unknown'}`),
+    })
   }
 
   return (
@@ -177,10 +176,10 @@ function PullRequestDetailPage() {
             <span className="font-mono">
               {pr.headRefName} → {pr.baseRefName}
             </span>
-            <span className="font-mono inline-flex items-center gap-0.5 text-foreground">
+            <span className="font-mono inline-flex items-center gap-0.5 text-emerald-500">
               <PlusIcon className="size-3" /> {compactNumber(pr.additions)}
             </span>
-            <span className="font-mono inline-flex items-center gap-0.5 text-destructive">
+            <span className="font-mono inline-flex items-center gap-0.5 text-rose-500">
               <MinusIcon className="size-3" /> {compactNumber(pr.deletions)}
             </span>
             <span>{pr.changedFiles} files</span>
@@ -217,7 +216,9 @@ function PullRequestDetailPage() {
                   close.mutate(undefined, {
                     onSuccess: () => toast.success('PR closed'),
                     onError: (e) =>
-                      toast.error(`failed to close: ${e.message ?? 'unknown'}`),
+                      toast.error(
+                        `failed to close: ${(e).message ?? 'unknown'}`,
+                      ),
                   })
                 }}
               >
@@ -233,7 +234,7 @@ function PullRequestDetailPage() {
                     onSuccess: () => toast.success('PR reopened'),
                     onError: (e) =>
                       toast.error(
-                        `failed to reopen: ${e.message ?? 'unknown'}`,
+                        `failed to reopen: ${(e).message ?? 'unknown'}`,
                       ),
                   })
                 }}
@@ -247,7 +248,7 @@ function PullRequestDetailPage() {
 
       <div className="grid flex-1 grid-cols-1 gap-4 p-4 lg:grid-cols-[1fr_280px]">
         <div className="min-w-0 space-y-4">
-          <Tabs value={tab} onValueChange={(v) => setTab(v as typeof tab)}>
+          <Tabs value={tab} onValueChange={(v) => setTab(v as Tab)}>
             <TabsList className="rounded-none">
               <TabsTrigger value="conversation" className="gap-1 rounded-none">
                 <MessageSquareIcon /> conversation
@@ -369,9 +370,9 @@ function PullRequestDetailPage() {
             <p
               className={
                 pr.mergeable === 'CONFLICTING'
-                  ? 'text-destructive'
+                  ? 'text-rose-500'
                   : pr.mergeable === 'MERGEABLE'
-                    ? 'text-foreground'
+                    ? 'text-emerald-500'
                     : 'text-muted-foreground'
               }
             >
@@ -403,158 +404,14 @@ function PullRequestDetailPage() {
         title={pr.title}
         number={pr.number}
         busy={merge.isPending}
-        onConfirm={(method) => {
-          merge.mutate(method, {
-            onSuccess: () => {
-              setMergeOpen(false)
-              toast.success(`PR merged with ${method}`)
-            },
-            onError: (e) =>
-              toast.error(`merge failed: ${e.message ?? 'unknown'}`),
-          })
-        }}
+        onConfirm={onMerge}
       />
     </div>
   )
 }
 
-function Sidecard({
-  label,
-  children,
-}: {
-  label: string
-  children: React.ReactNode
-}) {
-  return (
-    <section className="border border-border bg-card p-3">
-      <p className="mb-2 text-[10px] tracking-wider uppercase text-muted-foreground">
-        {label}
-      </p>
-      {children}
-    </section>
-  )
-}
-
-function ReviewActions({
-  body,
-  onBodyChange,
-  onSubmit,
-  disabled,
-}: {
-  body: string
-  onBodyChange: (v: string) => void
-  onSubmit: (event: 'APPROVE' | 'REQUEST_CHANGES' | 'COMMENT') => void
-  disabled: boolean
-}) {
-  return (
-    <details className="border border-border bg-card">
-      <summary className="flex cursor-pointer items-center justify-between border-b border-border bg-muted/30 px-3 py-2 text-xs">
-        <span className="flex items-center gap-2">
-          <ScrollIcon className="size-3" />
-          submit a review
-        </span>
-        <span className="text-[10px] text-muted-foreground">expand</span>
-      </summary>
-      <div className="space-y-2 p-3">
-        <textarea
-          value={body}
-          onChange={(e) => onBodyChange(e.target.value)}
-          placeholder="optional review summary"
-          className="min-h-20 w-full border border-border bg-input/30 px-2 py-1.5 text-xs outline-none focus-visible:border-ring focus-visible:ring-1 focus-visible:ring-ring/50"
-        />
-        <div className="flex items-center justify-end gap-2">
-          <Button
-            size="xs"
-            variant="ghost"
-            disabled={disabled}
-            onClick={() => onSubmit('COMMENT')}
-          >
-            <MessageSquareIcon /> comment
-          </Button>
-          <Button
-            size="xs"
-            variant="destructive"
-            disabled={disabled}
-            onClick={() => onSubmit('REQUEST_CHANGES')}
-          >
-            <TriangleAlertIcon /> request changes
-          </Button>
-          <Button
-            size="xs"
-            disabled={disabled}
-            onClick={() => onSubmit('APPROVE')}
-          >
-            <CheckIcon /> approve
-          </Button>
-        </div>
-      </div>
-    </details>
-  )
-}
-
-function MergeDialog({
-  open,
-  onOpenChange,
-  defaultMethod,
-  title,
-  number,
-  busy,
-  onConfirm,
-}: {
-  open: boolean
-  onOpenChange: (open: boolean) => void
-  defaultMethod: 'merge' | 'squash' | 'rebase'
-  title: string
-  number: number
-  busy: boolean
-  onConfirm: (method: 'merge' | 'squash' | 'rebase') => void
-}) {
-  const [method, setMethod] = React.useState<'merge' | 'squash' | 'rebase'>(
-    defaultMethod,
-  )
-  React.useEffect(() => {
-    if (open) setMethod(defaultMethod)
-  }, [open, defaultMethod])
-
-  return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>merge #{number}</DialogTitle>
-          <DialogDescription className="truncate">{title}</DialogDescription>
-        </DialogHeader>
-        <div className="space-y-3">
-          <label className="flex items-center gap-2 text-xs">
-            <span className="w-24 text-muted-foreground">method</span>
-            <Select
-              value={method}
-              onValueChange={(v) => setMethod(v as typeof method)}
-            >
-              <SelectTrigger size="sm">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="squash">squash</SelectItem>
-                <SelectItem value="merge">merge commit</SelectItem>
-                <SelectItem value="rebase">rebase</SelectItem>
-              </SelectContent>
-            </Select>
-          </label>
-        </div>
-        <DialogFooter>
-          <Button
-            size="xs"
-            variant="ghost"
-            disabled={busy}
-            onClick={() => onOpenChange(false)}
-          >
-            <XIcon /> cancel
-          </Button>
-          <Button size="xs" disabled={busy} onClick={() => onConfirm(method)}>
-            <GitMergeIcon /> merge
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
-  )
+function toastForReview(event: ReviewEvent): string {
+  if (event === 'APPROVE') return 'PR approved'
+  if (event === 'REQUEST_CHANGES') return 'changes requested'
+  return 'review submitted'
 }
