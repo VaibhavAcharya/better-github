@@ -9,50 +9,355 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as IndexRouteImport } from './routes/index'
+import { Route as AppRouteImport } from './routes/_app'
+import { Route as AppIndexRouteImport } from './routes/_app/index'
+import { Route as AppSettingsRouteImport } from './routes/_app/settings'
+import { Route as AppSearchRouteImport } from './routes/_app/search'
+import { Route as AppReposRouteImport } from './routes/_app/repos'
+import { Route as AppPullsRouteImport } from './routes/_app/pulls'
+import { Route as AppNotificationsRouteImport } from './routes/_app/notifications'
+import { Route as AppIssuesRouteImport } from './routes/_app/issues'
+import { Route as AppReposIndexRouteImport } from './routes/_app/repos/index'
+import { Route as AppPullsIndexRouteImport } from './routes/_app/pulls/index'
+import { Route as AppIssuesIndexRouteImport } from './routes/_app/issues/index'
+import { Route as AppReposOwnerRepoRouteImport } from './routes/_app/repos/$owner.$repo'
+import { Route as AppPullsOwnerRepoNumberRouteImport } from './routes/_app/pulls/$owner.$repo.$number'
+import { Route as AppIssuesOwnerRepoNumberRouteImport } from './routes/_app/issues/$owner.$repo.$number'
 
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
+const AppRoute = AppRouteImport.update({
+  id: '/_app',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AppIndexRoute = AppIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppSettingsRoute = AppSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppSearchRoute = AppSearchRouteImport.update({
+  id: '/search',
+  path: '/search',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppReposRoute = AppReposRouteImport.update({
+  id: '/repos',
+  path: '/repos',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppPullsRoute = AppPullsRouteImport.update({
+  id: '/pulls',
+  path: '/pulls',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppNotificationsRoute = AppNotificationsRouteImport.update({
+  id: '/notifications',
+  path: '/notifications',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppIssuesRoute = AppIssuesRouteImport.update({
+  id: '/issues',
+  path: '/issues',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppReposIndexRoute = AppReposIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AppReposRoute,
+} as any)
+const AppPullsIndexRoute = AppPullsIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AppPullsRoute,
+} as any)
+const AppIssuesIndexRoute = AppIssuesIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AppIssuesRoute,
+} as any)
+const AppReposOwnerRepoRoute = AppReposOwnerRepoRouteImport.update({
+  id: '/$owner/$repo',
+  path: '/$owner/$repo',
+  getParentRoute: () => AppReposRoute,
+} as any)
+const AppPullsOwnerRepoNumberRoute = AppPullsOwnerRepoNumberRouteImport.update({
+  id: '/$owner/$repo/$number',
+  path: '/$owner/$repo/$number',
+  getParentRoute: () => AppPullsRoute,
+} as any)
+const AppIssuesOwnerRepoNumberRoute =
+  AppIssuesOwnerRepoNumberRouteImport.update({
+    id: '/$owner/$repo/$number',
+    path: '/$owner/$repo/$number',
+    getParentRoute: () => AppIssuesRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
+  '/': typeof AppIndexRoute
+  '/issues': typeof AppIssuesRouteWithChildren
+  '/notifications': typeof AppNotificationsRoute
+  '/pulls': typeof AppPullsRouteWithChildren
+  '/repos': typeof AppReposRouteWithChildren
+  '/search': typeof AppSearchRoute
+  '/settings': typeof AppSettingsRoute
+  '/issues/': typeof AppIssuesIndexRoute
+  '/pulls/': typeof AppPullsIndexRoute
+  '/repos/': typeof AppReposIndexRoute
+  '/repos/$owner/$repo': typeof AppReposOwnerRepoRoute
+  '/issues/$owner/$repo/$number': typeof AppIssuesOwnerRepoNumberRoute
+  '/pulls/$owner/$repo/$number': typeof AppPullsOwnerRepoNumberRoute
 }
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute
+  '/notifications': typeof AppNotificationsRoute
+  '/search': typeof AppSearchRoute
+  '/settings': typeof AppSettingsRoute
+  '/': typeof AppIndexRoute
+  '/issues': typeof AppIssuesIndexRoute
+  '/pulls': typeof AppPullsIndexRoute
+  '/repos': typeof AppReposIndexRoute
+  '/repos/$owner/$repo': typeof AppReposOwnerRepoRoute
+  '/issues/$owner/$repo/$number': typeof AppIssuesOwnerRepoNumberRoute
+  '/pulls/$owner/$repo/$number': typeof AppPullsOwnerRepoNumberRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
-  '/': typeof IndexRoute
+  '/_app': typeof AppRouteWithChildren
+  '/_app/issues': typeof AppIssuesRouteWithChildren
+  '/_app/notifications': typeof AppNotificationsRoute
+  '/_app/pulls': typeof AppPullsRouteWithChildren
+  '/_app/repos': typeof AppReposRouteWithChildren
+  '/_app/search': typeof AppSearchRoute
+  '/_app/settings': typeof AppSettingsRoute
+  '/_app/': typeof AppIndexRoute
+  '/_app/issues/': typeof AppIssuesIndexRoute
+  '/_app/pulls/': typeof AppPullsIndexRoute
+  '/_app/repos/': typeof AppReposIndexRoute
+  '/_app/repos/$owner/$repo': typeof AppReposOwnerRepoRoute
+  '/_app/issues/$owner/$repo/$number': typeof AppIssuesOwnerRepoNumberRoute
+  '/_app/pulls/$owner/$repo/$number': typeof AppPullsOwnerRepoNumberRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/issues'
+    | '/notifications'
+    | '/pulls'
+    | '/repos'
+    | '/search'
+    | '/settings'
+    | '/issues/'
+    | '/pulls/'
+    | '/repos/'
+    | '/repos/$owner/$repo'
+    | '/issues/$owner/$repo/$number'
+    | '/pulls/$owner/$repo/$number'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/notifications'
+    | '/search'
+    | '/settings'
+    | '/'
+    | '/issues'
+    | '/pulls'
+    | '/repos'
+    | '/repos/$owner/$repo'
+    | '/issues/$owner/$repo/$number'
+    | '/pulls/$owner/$repo/$number'
+  id:
+    | '__root__'
+    | '/_app'
+    | '/_app/issues'
+    | '/_app/notifications'
+    | '/_app/pulls'
+    | '/_app/repos'
+    | '/_app/search'
+    | '/_app/settings'
+    | '/_app/'
+    | '/_app/issues/'
+    | '/_app/pulls/'
+    | '/_app/repos/'
+    | '/_app/repos/$owner/$repo'
+    | '/_app/issues/$owner/$repo/$number'
+    | '/_app/pulls/$owner/$repo/$number'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
+  AppRoute: typeof AppRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/': {
-      id: '/'
+    '/_app': {
+      id: '/_app'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AppRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_app/': {
+      id: '/_app/'
       path: '/'
       fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AppIndexRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/settings': {
+      id: '/_app/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof AppSettingsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/search': {
+      id: '/_app/search'
+      path: '/search'
+      fullPath: '/search'
+      preLoaderRoute: typeof AppSearchRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/repos': {
+      id: '/_app/repos'
+      path: '/repos'
+      fullPath: '/repos'
+      preLoaderRoute: typeof AppReposRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/pulls': {
+      id: '/_app/pulls'
+      path: '/pulls'
+      fullPath: '/pulls'
+      preLoaderRoute: typeof AppPullsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/notifications': {
+      id: '/_app/notifications'
+      path: '/notifications'
+      fullPath: '/notifications'
+      preLoaderRoute: typeof AppNotificationsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/issues': {
+      id: '/_app/issues'
+      path: '/issues'
+      fullPath: '/issues'
+      preLoaderRoute: typeof AppIssuesRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/repos/': {
+      id: '/_app/repos/'
+      path: '/'
+      fullPath: '/repos/'
+      preLoaderRoute: typeof AppReposIndexRouteImport
+      parentRoute: typeof AppReposRoute
+    }
+    '/_app/pulls/': {
+      id: '/_app/pulls/'
+      path: '/'
+      fullPath: '/pulls/'
+      preLoaderRoute: typeof AppPullsIndexRouteImport
+      parentRoute: typeof AppPullsRoute
+    }
+    '/_app/issues/': {
+      id: '/_app/issues/'
+      path: '/'
+      fullPath: '/issues/'
+      preLoaderRoute: typeof AppIssuesIndexRouteImport
+      parentRoute: typeof AppIssuesRoute
+    }
+    '/_app/repos/$owner/$repo': {
+      id: '/_app/repos/$owner/$repo'
+      path: '/$owner/$repo'
+      fullPath: '/repos/$owner/$repo'
+      preLoaderRoute: typeof AppReposOwnerRepoRouteImport
+      parentRoute: typeof AppReposRoute
+    }
+    '/_app/pulls/$owner/$repo/$number': {
+      id: '/_app/pulls/$owner/$repo/$number'
+      path: '/$owner/$repo/$number'
+      fullPath: '/pulls/$owner/$repo/$number'
+      preLoaderRoute: typeof AppPullsOwnerRepoNumberRouteImport
+      parentRoute: typeof AppPullsRoute
+    }
+    '/_app/issues/$owner/$repo/$number': {
+      id: '/_app/issues/$owner/$repo/$number'
+      path: '/$owner/$repo/$number'
+      fullPath: '/issues/$owner/$repo/$number'
+      preLoaderRoute: typeof AppIssuesOwnerRepoNumberRouteImport
+      parentRoute: typeof AppIssuesRoute
     }
   }
 }
 
+interface AppIssuesRouteChildren {
+  AppIssuesIndexRoute: typeof AppIssuesIndexRoute
+  AppIssuesOwnerRepoNumberRoute: typeof AppIssuesOwnerRepoNumberRoute
+}
+
+const AppIssuesRouteChildren: AppIssuesRouteChildren = {
+  AppIssuesIndexRoute: AppIssuesIndexRoute,
+  AppIssuesOwnerRepoNumberRoute: AppIssuesOwnerRepoNumberRoute,
+}
+
+const AppIssuesRouteWithChildren = AppIssuesRoute._addFileChildren(
+  AppIssuesRouteChildren,
+)
+
+interface AppPullsRouteChildren {
+  AppPullsIndexRoute: typeof AppPullsIndexRoute
+  AppPullsOwnerRepoNumberRoute: typeof AppPullsOwnerRepoNumberRoute
+}
+
+const AppPullsRouteChildren: AppPullsRouteChildren = {
+  AppPullsIndexRoute: AppPullsIndexRoute,
+  AppPullsOwnerRepoNumberRoute: AppPullsOwnerRepoNumberRoute,
+}
+
+const AppPullsRouteWithChildren = AppPullsRoute._addFileChildren(
+  AppPullsRouteChildren,
+)
+
+interface AppReposRouteChildren {
+  AppReposIndexRoute: typeof AppReposIndexRoute
+  AppReposOwnerRepoRoute: typeof AppReposOwnerRepoRoute
+}
+
+const AppReposRouteChildren: AppReposRouteChildren = {
+  AppReposIndexRoute: AppReposIndexRoute,
+  AppReposOwnerRepoRoute: AppReposOwnerRepoRoute,
+}
+
+const AppReposRouteWithChildren = AppReposRoute._addFileChildren(
+  AppReposRouteChildren,
+)
+
+interface AppRouteChildren {
+  AppIssuesRoute: typeof AppIssuesRouteWithChildren
+  AppNotificationsRoute: typeof AppNotificationsRoute
+  AppPullsRoute: typeof AppPullsRouteWithChildren
+  AppReposRoute: typeof AppReposRouteWithChildren
+  AppSearchRoute: typeof AppSearchRoute
+  AppSettingsRoute: typeof AppSettingsRoute
+  AppIndexRoute: typeof AppIndexRoute
+}
+
+const AppRouteChildren: AppRouteChildren = {
+  AppIssuesRoute: AppIssuesRouteWithChildren,
+  AppNotificationsRoute: AppNotificationsRoute,
+  AppPullsRoute: AppPullsRouteWithChildren,
+  AppReposRoute: AppReposRouteWithChildren,
+  AppSearchRoute: AppSearchRoute,
+  AppSettingsRoute: AppSettingsRoute,
+  AppIndexRoute: AppIndexRoute,
+}
+
+const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
-  IndexRoute: IndexRoute,
+  AppRoute: AppRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
